@@ -91,6 +91,33 @@ npx vsce package
   // 黑名单模式：在这些语言 ID 下不生效
   "imeSwitcher.blacklist": ["markdown", "plaintext"],
 
+## IntelliJ IDEA 插件（idea-plugin）
+
+项目包含一个基于 Kotlin 的 IntelliJ IDEA 插件实现，位于 `idea-plugin/`。该插件为实验性功能，提供与 IDE 集成的输入法自动切换支持（与 VS Code 扩展原理类似）。
+
+构建与调试
+
+- 要求：JDK 17（已在 CI 中使用），以及可选的本地 Gradle；仓库已包含 Gradle Wrapper。
+- 在 Windows 下使用项目内的 Gradle Wrapper 构建插件：
+
+```powershell
+cd idea-plugin
+.\gradlew.bat buildPlugin --no-daemon
+.\gradlew.bat verifyPluginConfiguration --no-daemon
+```
+
+- 构建产物位于 `idea-plugin/build/distributions/*.zip`，可在 IntelliJ IDEA 的插件管理中安装该 ZIP 进行测试。
+- 在开发时可使用沙箱运行或调试插件：
+
+```powershell
+cd idea-plugin
+.\gradlew.bat runIde
+```
+
+注意事项
+
+- 仓库已提交 Gradle Wrapper（`idea-plugin/gradle/wrapper/gradle-wrapper.jar`），无需预先安装 Gradle。
+- 本插件主要在 Windows 上做过集成测试；在 macOS/Linux 上的行为未验证。
   // 自定义 ime-switcher.exe 路径（留空则使用内置）
   "imeSwitcher.executable": ""
 }

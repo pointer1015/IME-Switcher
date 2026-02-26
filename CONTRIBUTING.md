@@ -26,7 +26,7 @@
 ### 克隆与安装
 
 ```bash
-git clone https://github.com/your-username/ime-switcher.git
+git clone https://github.com/pointer1015/ime-switcher.git
 cd ime-switcher
 ```
 

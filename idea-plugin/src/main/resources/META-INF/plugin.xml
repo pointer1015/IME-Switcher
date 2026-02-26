@@ -1,0 +1,102 @@
+<idea-plugin>
+    <id>com.imeswitcher.idea</id>
+    <name>IME Switcher</name>
+    <vendor email="dev@imeswitcher.example" url="https://github.com/your-org/IME-Switcher">
+        IME Switcher Team
+    </vendor>
+
+    <description><![CDATA[
+        <p>根据光标前后字符自动切换 Windows 输入法（中文 ↔ 英文）。</p>
+        <p>在 IntelliJ IDEA 及其他 JetBrains IDE 中实现与 VS Code 插件相同的体验：</p>
+        <ul>
+            <li>光标移到 CJK 字符附近时自动切换到中文输入法模式</li>
+            <li>光标移到 ASCII 字符附近时自动切换到英文模式</li>
+            <li>支持 IdeaVim：进入 Normal 模式自动切英文，退出时恢复</li>
+            <li>可在 <em>Settings → Tools → IME Switcher</em> 自定义行为</li>
+        </ul>
+        <p><strong>注意：</strong>仅支持 Windows，依赖项目内置的 <code>ime-switcher.exe</code>。</p>
+    ]]></description>
+
+    <!-- ── 依赖 ────────────────────────────────────────────── -->
+    <depends>com.intellij.modules.platform</depends>
+
+    <!-- IdeaVim 为可选依赖：未安装时插件仍完整工作 -->
+    <depends optional="true" config-file="ime-switcher-vim.xml">IdeaVIM</depends>
+
+    <!-- ── 扩展点注册 ─────────────────────────────────────── -->
+    <extensions defaultExtensionNs="com.intellij">
+
+        <!-- Application 级服务：全局 IME 状态管理 -->
+        <applicationService
+            serviceInterface="com.imeswitcher.ImeService"
+            serviceImplementation="com.imeswitcher.ImeService"/>
+
+        <!-- 配置持久化 -->
+        <applicationService
+            serviceImplementation="com.imeswitcher.ImeSettings"/>
+
+        <!-- Settings UI：File > Settings > Tools > IME Switcher -->
+        <applicationConfigurable
+            parentId="tools"
+            id="com.imeswitcher.settings"
+            displayName="IME Switcher"
+            instance="com.imeswitcher.ImeSettingsConfigurable"/>
+
+        <!-- 状态栏小部件 -->
+        <statusBarWidgetFactory
+            id="com.imeswitcher.statusBar"
+            implementation="com.imeswitcher.ImeStatusBarWidgetFactory"
+            order="last"/>
+
+        <!-- 通知分组 -->
+        <notificationGroup
+            id="IME Switcher"
+            displayType="BALLOON"/>
+
+        <!-- 启动活动：初始化插件路径 -->
+        <postStartupActivity implementation="com.imeswitcher.ImeStartupActivity"/>
+
+    </extensions>
+
+    <!-- ── 动作 ─────────────────────────────────────────────── -->
+    <actions>
+        <!-- 将三个动作归入一个子菜单，挂在 Edit 菜单末尾 -->
+        <group id="imeSwitcher.group"
+               text="IME Switcher"
+               description="输入法切换相关命令"
+               popup="true">
+            <add-to-group group-id="EditMenu" anchor="last"/>
+
+            <!-- 手动切换到中文 -->
+            <action id="imeSwitcher.switchToZh"
+                    class="com.imeswitcher.action.SwitchToZhAction"
+                    text="切换到中文输入"
+                    description="手动将输入法切换到中文模式">
+                <keyboard-shortcut keymap="$default" first-keystroke="ctrl alt Z"/>
+            </action>
+
+            <!-- 手动切换到英文 -->
+            <action id="imeSwitcher.switchToEn"
+                    class="com.imeswitcher.action.SwitchToEnAction"
+                    text="切换到英文输入"
+                    description="手动将输入法切换到英文模式">
+                <keyboard-shortcut keymap="$default" first-keystroke="ctrl alt E"/>
+            </action>
+
+            <!-- 启用 / 禁用自动切换 -->
+            <action id="imeSwitcher.toggleEnabled"
+                    class="com.imeswitcher.action.ToggleEnabledAction"
+                    text="启用/禁用 IME 自动切换"
+                    description="切换 IME Switcher 的自动切换功能">
+                <keyboard-shortcut keymap="$default" first-keystroke="ctrl alt I"/>
+            </action>
+        </group>
+    </actions>
+
+    <!-- ── 后台监听器 ─────────────────────────────────────── -->
+    <applicationListeners>
+        <listener class="com.imeswitcher.ImeEditorListener"
+                  topic="com.intellij.openapi.fileEditor.FileEditorManagerListener"/>
+    </applicationListeners>
+
+</idea-plugin>

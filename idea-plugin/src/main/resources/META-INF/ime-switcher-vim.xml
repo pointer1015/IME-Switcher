@@ -1,0 +1,8 @@
+<!-- IdeaVim 可选扩展配置 -->
+<!-- 当 IdeaVim 插件存在时额外注册此监听器，通过反射读取 Vim 模式并在 Normal 模式切换到英文 -->
+<idea-plugin>
+    <applicationListeners>
+        <listener class="com.imeswitcher.vim.ImeVimListener"
+                  topic="com.intellij.openapi.fileEditor.FileEditorManagerListener"/>
+    </applicationListeners>
+</idea-plugin>

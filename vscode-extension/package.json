@@ -1,0 +1,134 @@
+{
+  "name": "ime-switcher",
+  "displayName": "IME Switcher",
+  "description": "根据光标邻近字符，在微软拼音 IME 内部自动切换中文/英文输入模式",
+  "version": "0.5.0",
+  "publisher": "pointer1015",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pointer1015/ime-switcher"
+  },
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "ime",
+    "input method",
+    "chinese",
+    "pinyin",
+    "windows"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./out/src/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "imeSwitcher.toggleEnabled",
+        "title": "IME Switcher: 启用/禁用自动切换"
+      },
+      {
+        "command": "imeSwitcher.switchToZh",
+        "title": "IME Switcher: 手动切换到中文"
+      },
+      {
+        "command": "imeSwitcher.switchToEn",
+        "title": "IME Switcher: 手动切换到英文"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "imeSwitcher.switchToZh",
+        "key": "ctrl+alt+z",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "imeSwitcher.switchToEn",
+        "key": "ctrl+alt+e",
+        "when": "editorTextFocus"
+      }
+    ],
+    "configuration": {
+      "title": "IME Switcher",
+      "properties": {
+        "imeSwitcher.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "是否启用自动输入法切换"
+        },
+        "imeSwitcher.delayMs": {
+          "type": "number",
+          "default": 300,
+          "minimum": 50,
+          "maximum": 2000,
+          "description": "光标变化后触发切换的防抖毫秒数"
+        },
+        "imeSwitcher.executable": {
+          "type": "string",
+          "default": "",
+          "description": "ime-switcher.exe 的路径（留空则使用扩展内置的 bin/ime-switcher.exe）"
+        },
+        "imeSwitcher.whitelist": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "description": "仅在这些语言 ID 的文件中启用自动切换（留空表示全部启用）"
+        },
+        "imeSwitcher.blacklist": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "markdown",
+            "plaintext"
+          ],
+          "description": "在这些语言 ID 的文件中禁用自动切换"
+        },
+        "imeSwitcher.log": {
+          "type": "boolean",
+          "default": false,
+          "description": "是否在输出面板打印调试日志"
+        },
+        "imeSwitcher.toggleKey": {
+          "type": "string",
+          "enum": ["auto", "shift", "ctrl"],
+          "enumDescriptions": [
+            "自动：先尝试 Shift，若 100ms 内 IME 未响应则自动改用 Ctrl",
+            "仅用 Shift 键切换（微软拼音默认配置）",
+            "仅用 Ctrl 键切换（用户自定义为 Ctrl 切换时使用）"
+          ],
+          "default": "auto",
+          "description": "触发微软拼音中/英文切换的按键模式"
+        },
+        "imeSwitcher.pauseAfterManualSwitchMs": {
+          "type": "number",
+          "default": 3000,
+          "minimum": 0,
+          "description": "用户手动切换输入法后，暂停自动切换的毫秒数"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "test": "npm run compile && mocha out/test/detector.test.js --timeout 10000"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.6",
+    "@types/node": "^20.11.0",
+    "@types/vscode": "^1.80.0",
+    "@vscode/vsce": "^3.7.1",
+    "mocha": "^10.3.0",
+    "typescript": "^5.3.3"
+  }
+}

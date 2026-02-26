@@ -1,0 +1,87 @@
+# ===========================
+# Windows
+# ===========================
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# ===========================
+# Visual Studio Code
+# ===========================
+.vscode/*
+!.vscode/extensions.json
+!.vscode/launch.json
+!.vscode/tasks.json
+
+# ===========================
+# VS Code Extension — build outputs
+# ===========================
+vscode-extension/out/
+vscode-extension/node_modules/
+vscode-extension/*.vsix
+# package-lock.json 需要提交（保证可复现构建）
+
+# ===========================
+# Native Helper — build outputs
+# ===========================
+native-helper/*.exe
+native-helper/*.obj
+native-helper/*.pdb
+native-helper/*.ilk
+vscode-extension/bin/ime-switcher.exe
+
+# ===========================
+# IntelliJ IDEA Plugin — build outputs
+# ===========================
+idea-plugin/.gradle/
+idea-plugin/build/
+idea-plugin/local.properties
+*.iml
+.idea/
+
+# ===========================
+# Gradle
+# ===========================
+gradle-app.setting
+!gradle-wrapper.jar
+.gradletasknamecache
+
+# ===========================
+# Node.js
+# ===========================
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ===========================
+# Kotlin / Java
+# ===========================
+*.class
+*.jar
+# 保留 Gradle Wrapper jar（必须提交以支持无需安装 Gradle 直接构建）
+!idea-plugin/gradle/wrapper/gradle-wrapper.jar
+
+# ===========================
+# Environment / Secrets
+# ===========================
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+*.p12
+*.pfx
+
+# ===========================
+# 根目录打包产物
+# ===========================
+*.vsix
+
+# ===========================
+# Temp / Logs / 本地工具脚本
+# ===========================
+*.log
+*.tmp
+scripts/

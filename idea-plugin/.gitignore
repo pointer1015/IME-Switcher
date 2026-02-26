@@ -1,0 +1,8 @@
+.gradle/
+build/
+.idea/
+*.iml
+local.properties
+.intellijPlatform/
+# IntelliJ IDEA 编译输出目录（与 src/ 内容重复，不提交）
+bin/

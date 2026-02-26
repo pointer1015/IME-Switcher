@@ -1,0 +1,99 @@
+name: CI
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  # ─────────────────────────────────────────────────────────
+  # Job 1: Build & Test VS Code Extension (TypeScript)
+  # ─────────────────────────────────────────────────────────
+  vscode-extension:
+    name: VS Code Extension
+    runs-on: windows-latest
+
+    defaults:
+      run:
+        working-directory: vscode-extension
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: vscode-extension/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Compile TypeScript
+        run: npm run compile
+
+      - name: Run tests
+        run: npm test
+
+  # ─────────────────────────────────────────────────────────
+  # Job 2: Build Native Helper (C via MSVC / GCC)
+  # ─────────────────────────────────────────────────────────
+  native-helper:
+    name: Native Helper (Windows)
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up MSVC environment
+        uses: ilammy/msvc-dev-cmd@v1
+
+      - name: Build ime-switcher.exe
+        working-directory: native-helper
+        run: .\build.bat
+
+      - name: Verify binary exists
+        run: Test-Path vscode-extension\bin\ime-switcher.exe
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ime-switcher-exe
+          path: vscode-extension/bin/ime-switcher.exe
+          if-no-files-found: error
+
+  # ─────────────────────────────────────────────────────────
+  # Job 3: Build IntelliJ IDEA Plugin (Kotlin / Gradle)
+  # ─────────────────────────────────────────────────────────
+  idea-plugin:
+    name: IntelliJ IDEA Plugin
+    runs-on: windows-latest
+
+    defaults:
+      run:
+        working-directory: idea-plugin
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: gradle
+
+      - name: Build plugin
+        run: .\gradlew.bat buildPlugin --no-daemon
+
+      - name: Verify plugin configuration
+        run: .\gradlew.bat verifyPluginConfiguration --no-daemon
+
+      - name: Upload plugin artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: idea-plugin-zip
+          path: idea-plugin/build/distributions/*.zip
+          if-no-files-found: error
